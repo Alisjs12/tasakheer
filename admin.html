@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لوحة تحكم تساخير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #c5a059; --bg: #0b0b0b; --card-bg: #161616; --red: #ff4d4d; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg); color: #fff; font-family: 'Cairo', sans-serif; 
+            margin: 0; padding: 20px; padding-bottom: 40px;
+        }
+
+        h2 { color: var(--gold); text-align: center; font-family: 'Cinzel'; letter-spacing: 2px; }
+
+        /* نموذج إضافة منتج */
+        .add-form {
+            background: var(--card-bg); padding: 20px; border-radius: 15px;
+            border: 1px solid #333; margin-bottom: 30px;
+        }
+        input, select {
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px;
+            border: 1px solid #444; background: #000; color: #fff; font-family: 'Cairo';
+        }
+        .main-btn {
+            width: 100%; padding: 15px; background: var(--gold); border: none;
+            border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+
+        /* عرض المنتجات للإدارة */
+        .admin-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .admin-card {
+            background: var(--card-bg); display: flex; align-items: center;
+            padding: 10px; border-radius: 12px; border: 1px solid #222; gap: 15px;
+        }
+        .admin-card img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        .admin-info { flex: 1; }
+        .admin-info div { font-size: 0.9rem; font-weight: 600; }
+        .admin-info span { color: var(--gold); font-size: 0.8rem; }
+        
+        .delete-btn {
+            background: var(--red); color: white; border: none; padding: 8px 12px;
+            border-radius: 6px; font-size: 0.75rem; cursor: pointer;
+        }
+
+        .section-title { border-right: 4px solid var(--gold); padding-right: 10px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+    <h2>TASAKHEER ADMIN</h2>
+
+    <div class="add-form">
+        <div class="section-title">إضافة منتج جديد</div>
+        <input type="text" id="name" placeholder="اسم المنتج (مثلاً: ساعة رولكس)">
+        <input type="number" id="price" placeholder="السعر بالدينار الليبي">
+        <input type="text" id="img" placeholder="رابط صورة المنتج">
+        <select id="cat">
+            <option value="ساعة">قسم الساعات</option>
+            <option value="عطر">قسم العطور</option>
+            <option value="عرض">قسم العروض</option>
+        </select>
+        <button id="addBtn" class="main-btn">نشر المنتج الآن</button>
+    </div>
+
+    <div class="section-title">المنتجات المعروضة حالياً</div>
+    <div id="adminList" class="admin-grid">جاري تحميل المنتجات...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        const firebaseConfig = {
+            databaseURL: "https://tasakheer-88c09-default-rtdb.firebaseio.com"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const productsRef = ref(db, 'products');
+
+        // وظيفة الإضافة
+        document.getElementById('addBtn').onclick = () => {
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            const img = document.getElementById('img').value;
+            const cat = document.getElementById('cat').value;
+
+            if(name && price && img) {
+                push(productsRef, { name, price, img, category: cat })
+                .then(() => {
+                    alert("تمت إضافة المنتج بنجاح!");
+                    document.querySelectorAll('input').forEach(i => i.value = "");
+                });
+            } else {
+                alert("الرجاء ملء جميع الحقول");
+            }
+        };
+
+        // وظيفة العرض والحذف
+        onValue(productsRef, (snapshot) => {
+            const data = snapshot.val();
+            const listDiv = document.getElementById('adminList');
+            listDiv.innerHTML = "";
+
+            for (let id in data) {
+                const p = data[id];
+                listDiv.innerHTML += `
+                    <div class="admin-card">
+                        <img src="${p.img}">
+                        <div class="admin-info">
+                            <div>${p.name}</div>
+                            <span>${p.price} د.ل - ${p.category}</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteProduct('${id}')">حذف</button>
+                    </div>
+                `;
+            }
+        });
+
+        // جعل وظيفة الحذف متاحة عالمياً
+        window.deleteProduct = (id) => {
+            if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+                remove(ref(db, 'products/' + id));
+            }
+        };
+    </script>
+</body>
+</html>

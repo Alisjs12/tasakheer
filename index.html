@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تساخير | الفخامة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { --gold: #c5a059; --dark: #050505; }
+        body { margin: 0; background: var(--dark); color: white; font-family: 'Cairo', sans-serif; }
+        .hero { 
+            height: 100vh; 
+            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .logo-main { font-family: 'Cinzel', serif; color: var(--gold); font-size: 4.5rem; letter-spacing: 12px; margin: 0; text-shadow: 0 0 20px rgba(197, 160, 89, 0.5); }
+        .hero p { font-size: 1.3rem; color: #ccc; margin-top: 15px; letter-spacing: 2px; }
+        .btn-enter { 
+            margin-top: 50px; padding: 15px 50px; border: 2px solid var(--gold); color: var(--gold); 
+            text-decoration: none; font-weight: bold; border-radius: 50px; transition: 0.4s;
+            font-size: 1.2rem; background: transparent;
+        }
+        .btn-enter:hover { background: var(--gold); color: black; box-shadow: 0 0 30px var(--gold); }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1 class="logo-main">TASAKHEER</h1>
+        <p>مجموعتكم الراقية والحصرية</p>
+        <a href="products.html" class="btn-enter">استعراض منتجات تساخير</a>
+        <a href="admin.html" style="margin-top:20px; color:#444; text-decoration:none; font-size:0.8rem;">لوحة الإدارة</a>
+    </div>
+</body>
+</html>
